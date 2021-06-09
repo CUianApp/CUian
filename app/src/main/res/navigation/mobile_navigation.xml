@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_faculty">
+
+    <fragment
+        android:id="@+id/navigation_clubs"
+        android:name="com.kushalsharma.cuian.ui.clubs.ClubsFragment"
+        android:label="Clubs"
+        tools:layout="@layout/fragment_clubs" >
+        <action
+            android:id="@+id/action_navigation_clubs_to_sideNavFragment2"
+            app:destination="@id/sideNavFragment"
+            app:enterAnim="@android:anim/slide_in_left" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_faculty"
+        android:name="com.kushalsharma.cuian.ui.faculty.FacultyFragment"
+        android:label="Faculty"
+        tools:layout="@layout/fragment_faculty" >
+        <action
+            android:id="@+id/action_navigation_faculty_to_sideNavFragment2"
+            app:destination="@id/sideNavFragment"
+            app:enterAnim="@android:anim/slide_in_left" />
+    </fragment>
+    <fragment
+        android:id="@+id/sideNavFragment"
+        android:name="com.kushalsharma.cuian.SideNavFragment"
+        android:label="fragment_side_nav"
+        tools:layout="@layout/fragment_side_nav" >
+        <action
+            android:id="@+id/action_sideNavFragment_to_aboutUsFragment2"
+            app:destination="@id/aboutUsFragment"
+            app:enterAnim="@android:anim/fade_in" />
+        <action
+            android:id="@+id/action_sideNavFragment_to_navigation_faculty"
+            app:destination="@id/navigation_faculty"
+            app:enterAnim="@android:anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutUsFragment"
+        android:name="com.kushalsharma.cuian.AboutUsFragment"
+        android:label="fragment_about_us"
+        tools:layout="@layout/fragment_about_us" >
+        <action
+            android:id="@+id/action_aboutUsFragment_to_sideNavFragment2"
+            app:destination="@id/sideNavFragment"
+            app:enterAnim="@android:anim/fade_in" />
+        <action
+            android:id="@+id/action_aboutUsFragment_to_navigation_clubs3"
+            app:destination="@id/navigation_clubs"
+            app:enterAnim="@android:anim/fade_in" />
+    </fragment>
+
+</navigation>
