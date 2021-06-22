@@ -1,18 +1,14 @@
 package com.kushalsharma.cuian
 
 import android.content.Context
-import android.os.Build
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import kotlinx.android.synthetic.main.activity_main.*
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.tapadoo.alerter.Alerter
 
 class MainActivity() : AppCompatActivity() {
 
@@ -27,25 +23,39 @@ class MainActivity() : AppCompatActivity() {
         navView.itemIconTintList = null
 
 
+        if (!netConnect(applicationContext)) {
+            showBanner(
+                R.color.red, "You are not connected to internet.",
+                5000, R.drawable.ic_baseline_wifi_off_24
+            )
+        }
+
     }
-        fun showBanner(resourseColor: Int, text : String, delay : Int) {
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    this.window
-                        .setStatusBarColor(ContextCompat.getColor(this, resourseColor))
-                    banner.setMessage(text)
-                    banner.setBackgroundResource(resourseColor)
-                    banner.show()
-                }
-
-            Handler(Looper.getMainLooper()).postDelayed({
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    this.window
-                        .setStatusBarColor(ContextCompat.getColor(this, R.color.backGroundColor))
-                    banner.dismiss()
-                }
-
-            }, delay.toLong())
+    fun showBanner(resourseColor: Int, text: String, delay: Int, drawable: Int) {
+        Alerter.create(this)
+            .setTitle(text)
+            .setBackgroundColorRes(resourseColor)
+            .setIcon(drawable)
+            .setDuration(delay.toLong())
+            .enableSwipeToDismiss()
+            .show()
     }
+
+    fun netConnect(ctx: Context): Boolean {
+        val cm: ConnectivityManager
+        var info: NetworkInfo? = null
+        try {
+            cm = ctx.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+            info = cm.activeNetworkInfo
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return info != null
+
+
+    }
+
 
 }
+

@@ -12,8 +12,7 @@
         tools:layout="@layout/fragment_clubs" >
         <action
             android:id="@+id/action_navigation_clubs_to_sideNavFragment2"
-            app:destination="@id/sideNavFragment"
-            app:enterAnim="@android:anim/slide_in_left" />
+            app:destination="@id/sideNavFragment" />
     </fragment>
 
     <fragment
@@ -24,7 +23,7 @@
         <action
             android:id="@+id/action_navigation_faculty_to_sideNavFragment2"
             app:destination="@id/sideNavFragment"
-            app:enterAnim="@android:anim/slide_in_left" />
+            app:enterAnim="@anim/right_in" />
     </fragment>
     <fragment
         android:id="@+id/sideNavFragment"
@@ -38,7 +37,7 @@
         <action
             android:id="@+id/action_sideNavFragment_to_navigation_faculty"
             app:destination="@id/navigation_faculty"
-            app:enterAnim="@android:anim/slide_out_right" />
+            app:enterAnim="@android:anim/fade_in" />
     </fragment>
     <fragment
         android:id="@+id/aboutUsFragment"

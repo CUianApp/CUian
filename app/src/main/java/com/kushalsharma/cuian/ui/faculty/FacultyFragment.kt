@@ -4,36 +4,42 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.Request
-import com.android.volley.RequestQueue
-import com.android.volley.toolbox.JsonArrayRequest
-import com.android.volley.toolbox.Volley
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.kushalsharma.cuian.MainActivity
-import com.kushalsharma.cuian.MySingleton
 import com.kushalsharma.cuian.R
-import com.kushalsharma.cuian.modals.PersonUtils
+import com.kushalsharma.cuian.modals.FireUtils
 import kotlinx.android.synthetic.main.fragment_faculty.*
-import org.json.JSONException
+import kotlinx.android.synthetic.main.fragment_faculty.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class FacultyFragment : Fragment(), cpyItemClicked {
 
-    var recyclerView: RecyclerView? = null
-    var mAdapter: RecyclerView.Adapter<*>? = null
-    var layoutManager: RecyclerView.LayoutManager? = null
-    var personUtilsList: MutableList<PersonUtils>? = null
-    var personUtils: PersonUtils? = null
-    var rq: RequestQueue? = null
-    var request_url = "https://sheetdb.io/api/v1/xs9vpziuescng"
-    private lateinit var adp: FacultyAdapter
-    var sideNavBtn : ImageView? = null
+    private val db = FirebaseFirestore.getInstance()
+    private lateinit var adapter: FireAdapter
+
+    private var recyclerView: RecyclerView? = null
+    private var swipeRefresh: SwipeRefreshLayout? = null
+    private var sideNavBtn: ImageView? = null
+    private var searchEditText: EditText? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,144 +48,135 @@ class FacultyFragment : Fragment(), cpyItemClicked {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_faculty, container, false)
 
-        recyclerView = root.findViewById<View>(R.id.recyclerView_faculty) as RecyclerView
         sideNavBtn = root.findViewById(R.id.side_nav_icon)
+        swipeRefresh = root.findViewById(R.id.swipeRefresh)
+        recyclerView = root.findViewById(R.id.recyclerView_faculty) as RecyclerView
+        searchEditText = root.findViewById(R.id.textInputEditText)
 
-           sideNavBtn!!.setOnClickListener {
-                    Navigation.findNavController(it).navigate(R.id.action_navigation_faculty_to_sideNavFragment2)
+        sideNavBtn!!.setOnClickListener {
+            Navigation.findNavController(it)
+                .navigate(R.id.action_navigation_faculty_to_sideNavFragment2)
+        }
+
+            setupRecylcerView()
+
+
+
+
+
+        swipeRefresh!!.setOnRefreshListener {
+
+                updateoperation()
+                Handler(Looper.myLooper()!!).postDelayed({
+                    swipeRefresh!!.isRefreshing = false
+                }, 1000)
+
+        }
+
+        searchEditText!!.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable) {
+                val query: Query
+                if (s.toString().isEmpty()) {
+                    query = db.collection("FacultyData")
+                        .orderBy("fName").limit(300)
+                } else {
+                    query = db.collection("FacultyData")
+                        .orderBy("fName").limit(300)
+//                         .whereEqualTo("fName",s.toString())
+                        .startAt(s.toString()).endAt(s.toString() + "\uf8ff")
+
                 }
+
+
+                val options = FirestoreRecyclerOptions.Builder<FireUtils>()
+                    .setQuery(query, FireUtils::class.java)
+                    .setLifecycleOwner(this@FacultyFragment).build()
+                adapter.updateOptions(options)
+
+            }
+        })
+
+
 
         return root
     }
 
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        setUpRecyclerView()
-
-        adp = FacultyAdapter(this, personUtilsList!!, this)
+    private fun setupRecylcerView() {
 
 
-        filterBtnLayout.setOnClickListener {
+        val query = db.collection("FacultyData")
+            .orderBy("fName").limit(300)
 
-            if (ll_filterBtns.getVisibility() == View.GONE) {
-                ll_filterBtns.setVisibility(View.VISIBLE)
-                arrowIcon.setImageResource(R.drawable.up_arrow)
-
-            } else {
-                ll_filterBtns.setVisibility(View.GONE)
-                arrowIcon.setImageResource(R.drawable.down_arrow)
-            }
-
-        }
-
-        swipeRefresh.setOnRefreshListener {
-
-            updateoperation()
-            swipeRefresh.isRefreshing = false
-
-        }
+        val options = FirestoreRecyclerOptions.Builder<FireUtils>()
+            .setQuery(query, FireUtils::class.java)
+            .setLifecycleOwner(this).build()
 
 
+        adapter = FireAdapter(options, this)
+        recyclerView!!.adapter = adapter
+        recyclerView!!.layoutManager = LinearLayoutManager(this.context)
+
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        adapter.startListening()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        adapter.stopListening()
     }
 
 
     private fun updateoperation() {
-        setUpRecyclerView()
-    }
 
 
-    private fun setUpRecyclerView() {
-        rq = Volley.newRequestQueue(this.context)
-        recyclerView!!.setHasFixedSize(true)
-        layoutManager = LinearLayoutManager(this.context)
-        recyclerView!!.setHasFixedSize(true)
-        recyclerView!!.layoutManager = layoutManager
-        personUtilsList = java.util.ArrayList()
-        sendRequest()
-
-
-    }
-
-    fun sendRequest() {
-        progress_Bar.visibility = View.VISIBLE
-        val jsonArrayRequest =
-            JsonArrayRequest(Request.Method.GET, request_url, null, { response ->
-
-                for (i in 0 until response.length()) {
-                    val personUtils = PersonUtils()
-                    try {
-                        val jsonObject = response.getJSONObject(i)
-                        personUtils.personFirstName = (jsonObject.getString("firstname"))
-                        personUtils.personLastName = (jsonObject.getString("lastname"))
-                        personUtils.jobProfile = (jsonObject.getString("jobprofile"))
-                        personUtils.Department = (jsonObject.getString("Department"))
-                        personUtils.Email = (jsonObject.getString("Email"))
-                        personUtils.PhoneNo = (jsonObject.getString("Phone No."))
-                        personUtils.imgUrl = (jsonObject.getString("Image Link"))
-                    } catch (e: JSONException) {
-                        e.printStackTrace()
-                    }
-                    personUtilsList!!.add(personUtils)
-                }
-                progress_Bar.visibility = View.INVISIBLE
-
-                mAdapter = FacultyAdapter(this, personUtilsList!!, this)
-                (mAdapter as FacultyAdapter).notifyDataSetChanged()
-                recyclerView!!.adapter = mAdapter
-
-            })
-
-
-            { error ->
-
+            if (!(activity as MainActivity?)!!.netConnect(requireActivity().applicationContext)) {
                 (activity as MainActivity?)!!.showBanner(
                     R.color.red,
-                    "Looks like you are not connected to the Internet.",
-                    5000
+                    "You are not connected to internet.",
+                    5000, R.drawable.ic_baseline_wifi_off_24
                 )
+            } else {
+                    setupRecylcerView()
+
+
 
             }
-        MySingleton.getInstance(this.context)!!.addToRequestQueue(jsonArrayRequest)
+
+
+
 
 
     }
 
-
-    override fun oncopyClicked(cItem: PersonUtils, view: View) {
-
+    override fun oncopyClicked(cItem: String, view: View) {
         (activity as MainActivity?)!!.showBanner(
             R.color.green,
-            "${cItem.Email.toString()} " +
-                    "is copied to your clipboard, " +
-                    "now you can paste it anywhere you want.",
-            1500
+            "Copied to your clipboard.",
+            1000,
+            R.drawable.ic_baseline_check_circle_24
         )
         val Clipboard =
             view.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val myClip = ClipData.newPlainText(cItem.Email.toString(), cItem.Email.toString())
+        val myClip = ClipData.newPlainText(cItem, cItem)
         Clipboard.setPrimaryClip(myClip)
-
-
     }
 
-    override fun onPhcopyClicked(pItem: PersonUtils, view: View) {
+    override fun onPhcopyClicked(pItem: String, view: View) {
         (activity as MainActivity?)!!.showBanner(
             R.color.green,
-            "${pItem.Email.toString()} " +
-                    "copied to your clipboard, " +
-                    "now you can paste it anywhere you want.",
-            1500
+            "Copied to your clipboard. ",
+            1000, R.drawable.ic_baseline_check_circle_24
         )
         val Clipboard =
             view.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val myClip = ClipData.newPlainText(pItem.PhoneNo.toString(), pItem.PhoneNo.toString())
+        val myClip = ClipData.newPlainText(pItem, pItem)
         Clipboard.setPrimaryClip(myClip)
-
-
     }
-
-
 }
 

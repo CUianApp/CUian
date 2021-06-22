@@ -11,4 +11,6 @@
     <color name="cardColor">#C4C4C4</color>
     <color name="red">#FF5151</color>
     <color name="green">#23A32A</color>
+    <color name="trash">#FF0033</color>
+    <color name="card_background">#C4C4C4</color>
 </resources>

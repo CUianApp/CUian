@@ -14,9 +14,6 @@ import kotlinx.android.synthetic.main.fragment_side_nav.view.*
 
 
 class SideNavFragment : Fragment() {
-
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -61,19 +58,18 @@ class SideNavFragment : Fragment() {
     }
 
     private fun toPlayStore() {
-
         try {
             startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("market://details?id=com.kushalsharma.trust")
+                    Uri.parse("market://details?id=com.kushalsharma.cuian")
                 )
             )
         } catch (e: ActivityNotFoundException) {
             startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("https://play.google.com/store/apps/details?id=com.kushalsharma.trust")
+                    Uri.parse("https://play.google.com/store/apps/details?id=com.kushalsharma.cuian")
                 )
             )
         }
@@ -85,7 +81,7 @@ class SideNavFragment : Fragment() {
 
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "plain/text"
-        intent.putExtra(Intent.EXTRA_EMAIL, arrayOf("some@email.address"))
+        intent.putExtra(Intent.EXTRA_EMAIL, arrayOf("anyoneints@gmail.com"))
         intent.putExtra(Intent.EXTRA_SUBJECT, "subject")
         intent.putExtra(Intent.EXTRA_TEXT, "mail body")
         startActivity(Intent.createChooser(intent, ""))

@@ -30,7 +30,7 @@ class AboutUsFragment : Fragment() {
                 .navigate(R.id.action_aboutUsFragment_to_navigation_clubs3)
         }
         root.gitImage.setOnClickListener {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"))
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/CUianApp/CUian"))
             startActivity(browserIntent)
 
         }

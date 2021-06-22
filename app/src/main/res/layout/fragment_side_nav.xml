@@ -8,19 +8,18 @@
     tools:context=".SideNavFragment">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cancelSideNav"
         android:layout_width="@dimen/top_button_dimen"
         android:layout_height="@dimen/top_button_dimen"
-        android:layout_marginTop="40dp"
-        android:id="@+id/cancelSideNav"
+        android:layout_marginLeft="16dp"
         android:backgroundTint="@color/backGroundColor"
-        android:elevation="0dp"
         android:clickable="true"
+        android:elevation="0dp"
+        android:layout_marginTop="44dp"
         android:foreground="?android:attr/selectableItemBackground"
         android:outlineProvider="none"
         app:cardCornerRadius="@dimen/top_button_dimen"
-        app:layout_constraintHorizontal_bias="0.123"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
@@ -34,55 +33,62 @@
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="48dp"
         android:src="@drawable/ic_titletag"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cancelSideNav"
-       />
+        app:layout_constraintHorizontal_bias="0.27"
+        app:layout_constraintStart_toEndOf="@+id/cancelSideNav"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/aboutUs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="52dp"
-        android:layout_marginEnd="160dp"
+        android:foreground="?android:attr/selectableItemBackground"
         android:text="About Us"
         android:textSize="24sp"
+        android:layout_marginTop="44dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <TextView
         android:id="@+id/contactUs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="164dp"
+        android:layout_marginTop="44dp"
         android:text="Contact Us"
         android:textSize="24sp"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/aboutUs" />
 
     <TextView
         android:id="@+id/rateUs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="176dp"
+        android:layout_marginTop="44dp"
         android:text="Rate Us"
         android:textSize="24sp"
+        android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/contactUs" />
 
     <TextView
         android:id="@+id/shareCuian"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="160dp"
+        android:layout_marginTop="44dp"
         android:text="Share Cuian"
+        android:foreground="?android:attr/selectableItemBackground"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rateUs" />
 
     <TextView
@@ -90,6 +96,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
+        android:foreground="?android:attr/selectableItemBackground"
         android:text="Privacy Policy"
         app:layout_constraintBottom_toTopOf="@+id/cardViewLine"
         android:textColor="#817777"
@@ -103,8 +110,10 @@
         android:layout_marginStart="64dp"
         android:layout_marginBottom="0dp"
         android:text="Terms And Conditions"
+        android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintBottom_toTopOf="@+id/cardViewLineTo"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardViewLine"
